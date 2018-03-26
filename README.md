@@ -10,7 +10,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 Please intall the following packages.
-Please refer to https://docs.npmjs.com/cli/install for how to's.
+Please refer to https://docs.npmjs.com for how to's.
 
 ## Dependencies
 
