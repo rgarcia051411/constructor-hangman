@@ -1,44 +1,69 @@
-// require inquirer
-var inquirer = require('inquirer');
-var isLetter = require('is-letter');
-// require exports
-var Word = require('./word.js');
+var Word = require("./word.js");
+var prompt = require("prompt");
 
-// set the maxListener 
-require('events').EvenEmitter.prototype._maxListeners = 100;
+console.log("Welcome to node.js Hangman!");
+console.log("Guess a letter of the name of a Fruit");
+console.log("Goodluck!");
+console.log("#===========================#");
+prompt.start();
 
+// word bank
+game = {
+  wordBank: [
+    "banana",
+    "mango",
+    "oranges",
+    "grapes",
+    "lemon",
+    "avocado",
+    "melon"
+  ],
+  wordsWon: 0,
+  guessesRemaining: 10,
+  currentWrd: null,
 
-var hangman = {
-	wordBank = ["banana", "apple", "melon", "orange", "guava", "grapes"];
-	guessesRemaining: 10,
-	// empty array to hold guessed letters by the user, and checks if the letter has been guessed already
-	guessedLetters:[],
-	display:0,
-	wordCurrent:null,
+  startGame: function(wrd) {
+    this.resetGuesses();
+    this.currentWrd = new Word(
+      this.wordBank[Math.floor(Math.random() * this.wordBank.length)]
+    );
+    this.currentWrd.getLet();
+    this.promptUser();
+  },
 
-	// start game function.promt the user if ready to play.
-	startGame: function(){
-		// clears guessedLetters every new game.
-		if(this.guessedLetters.length > 0){
-			this.guessedLetters = [];
-		}
+  resetGuesses: function() {
+    this.guessesRemaining = 5;
+  },
 
-		inquirer.prompt ([{
-			type: "confirm",
-			message: "Are you ready for Hangman?",
-			name: "play"
-		}]).then(function(answer){
-			if(answer.play){
-				this.newGame();
-			} else{
-				console.log("booooooooo");
-			}
-		})},
+  promptUser: function() {
+    var self = this;
+    prompt.get(["guessLet"], function(err, result) {
+      console.log("You guessed: " + result.guessLet);
+      var manyGuessed = self.currentWrd.checkLetter(result.guessLet);
 
-		// new game if player decided to play.
-		newGame: function(){
-			
-		}
+      if (manyGuessed == 0) {
+        console.log("WRONG");
+        self.guessesRemaining--;
+      } else {
+        console.log("CORRECT");
+        if (self.currentWrd.findWord()) {
+          console.log("You won!");
+          console.log("-------------------");
+          return;
+        }
+      }
 
-	}
-}
+      console.log("Guesses remaining: " + self.guessesRemaining);
+      console.log("-------------------");
+      if (self.guessesRemaining > 0 && self.currentWrd.found == false) {
+        self.promptUser();
+      } else if (self.guessesRemaining == 0) {
+        console.log("Game over. Correct Word ", self.currentWrd.target);
+      } else {
+        console.log(self.currentWrd.wordRender());
+      }
+    });
+  }
+};
+
+game.startGame();

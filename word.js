@@ -1,47 +1,46 @@
-var Letters = require('./letter.js');
+var letter = require('./letter.js');
 
 
-var Word = function(word){
-	this.word = word;
-	this.charArray = [];
-	this.currentWord = false;
+function Word(target) {
+  this.target = target;
+  this.lets = [];
+  this.found = false;
 
-	this.getLetter = function(){
-		for (var i = 0; i < this.word.length; i++){
-			var newLetter = new Letters(this.word[i]);
-			this.charArray.push(newLetter);
-		}
-	}
-	// generated current word
-	this.wordFound = function(){
-		if (this.charArray.every(function(letter){
-			return letter.appear === true;
-		})){
-			this.currentWord = true;
-			return true;
-		}
-	};
+  this.getLet = function() {
+    for (var i = 0; i < this.target.length; i++) {
+      this.lets.push(new letter(this.target[i]));
+    }
+  };
 
-	this.ifLetterIsGuessed = function(guessedLetter){
-		var toReturn = 0;
-		// goes through each letter to check if it matches the guessed letter
-		this.charArray.forEach(function(letter){
-			if(letter.isGuessed === guessedLetter){
-				letter.appear = true;
-				toReturn++;
-			}
-		});
-	// if guessLetter matches the letter, the letter object should show
-		return toReturn;
-	}
+  this.findWord = function() {
+    this.found = this.lets.every(function(currLett) {
+      return currLett.appear;
+    });
+    return this.found;
+  };
 
-	this.WordGenerated = function(){
-		var display = '';
-		// generates a word if letter are found or not.
-		this.charArray.forEach(function(letter){
-			var currentLetter = letter.letterGuessed();
-			display += currentLetter;
-		})
-		return display;
-	};
-};
+  this.checkLetter = function(guessLet) {
+    var toReturn = 0;
+
+    for (var i = 0; i < this.lets.length; i++) {
+      if (this.lets[i].charac == guessLet) {
+        this.lets[i].appear = true;
+        toReturn++;
+      }
+    }
+    return toReturn;
+  };
+
+  this.wordRender = function() {
+    var string = "";
+    for (var i = 0; i < this.lets.length; i++) {
+      string += this.lets[i].letterRender();
+    }
+    return string;
+  };
+}
+
+module.exports = Word;
+
+
+console.log("connnected")
